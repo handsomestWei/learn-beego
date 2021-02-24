@@ -6,6 +6,7 @@ import (
 	"github.com/astaxie/beego"
 	"github.com/astaxie/beego/context"
 	"github.com/astaxie/beego/logs"
+	"encoding/json"
 )
 
 func main() {
@@ -40,5 +41,11 @@ func setFilters() {
 			ctx.Redirect(302, "/")
 		}
 	})
+	// controller方法结束后的处理
+	beego.InsertFilter("/api/v1/cms/user", beego.AfterExec, func(i *context.Context) {
+		// 获取response的json内容
+		outputBytes, _ := json.Marshal(i.Input.Data()["json"])
+		logs.Debug(string(outputBytes))
+	}, false)
 }
 
